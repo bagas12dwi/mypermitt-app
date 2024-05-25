@@ -6,6 +6,7 @@ import 'package:permit_app/helpers/helper.dart';
 import 'package:permit_app/views/const/color.dart';
 import 'package:permit_app/views/const/components/rounded_button.dart';
 import 'package:permit_app/views/screens/ditolak/ditolak.dart';
+import 'package:permit_app/views/screens/open_permit/close_permit.dart';
 
 class CardOpenPermit extends StatelessWidget {
   CardOpenPermit({super.key, required this.permitNumber, required this.status, required this.workCategory, required this.date, required this.time, required this.projectName, required this.location, required this.workers, required this.name, required this.role, required this.permitId, required this.userId});
@@ -168,7 +169,8 @@ class CardOpenPermit extends StatelessWidget {
                                 ),
                                 RoundedButtonDialog(
                                   onPressed: () async{
-                                    await _openPermit('Close');
+                                    Get.to(() => ClosePermitScreen(role: role, permitId: permitId, userId: userId,));
+                                    // await _openPermit('Close');
                                   },
                                   title: "Ya",
                                   backgroundColor: kLight,

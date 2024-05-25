@@ -72,6 +72,7 @@ class IdentifikasiBahayaScreen extends StatelessWidget {
                           title: item['pertanyaan'],
                           value: item['value'],
                           screen: 'bahaya',
+                          textController: requestPermitController.lainnyaController,
                       );
                     }).toList(),
                   ),

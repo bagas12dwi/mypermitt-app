@@ -3,11 +3,12 @@ import 'package:get/get.dart';
 import 'package:permit_app/controllers/request_permit_controller.dart';
 
 class CardBahaya extends StatelessWidget {
-  CardBahaya({super.key, required this.title, required this.value, required this.screen});
+  CardBahaya({super.key, required this.title, required this.value, required this.screen, this.textController});
   final String title;
   final bool value;
   final String screen;
   final RequestPermitController requestPermitController = Get.find<RequestPermitController>();
+  final TextEditingController? textController;
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +16,24 @@ class CardBahaya extends StatelessWidget {
       children: [
         Expanded(
           flex: 9,
-          child: Text(
-            title,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+              ),
+              if(title.startsWith('Lainnya:') && value)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: TextField(
+                    controller: textController,
+                    decoration: const InputDecoration(
+                      labelText: 'Lainnya',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+            ],
           ),
         ),
         Expanded(

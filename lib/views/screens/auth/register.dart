@@ -2,7 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:permit_app/controllers/jabatan_controller.dart';
 import 'package:permit_app/controllers/user_controller.dart';
+import 'package:permit_app/models/jabatan.dart';
 import 'package:permit_app/models/user_model.dart';
 import 'package:permit_app/views/const/color.dart';
 import 'package:permit_app/views/const/components/rounded_button.dart';
@@ -17,6 +19,7 @@ class Register extends StatelessWidget {
   final TextEditingController roleController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
+  final JabatanController jabatanController = Get.put(JabatanController());
   RxBool _isLoading = false.obs;
 
   Future<void> _register() async{
@@ -25,7 +28,7 @@ class Register extends StatelessWidget {
           usernameController.text,
           passwordController.text,
           nameController.text,
-          roleController.text
+          jabatanController.selectedItem.value!.name
       );
 
       User? loggedInUser = userController.user.value;
@@ -70,10 +73,23 @@ class Register extends StatelessWidget {
                         decoration: TextDecoration.none
                     ),
                   ),
-                  RoundedInputFieldAuth(
-                    hintText: "Jabatan",
-                    icon: Icons.work,
-                    controller: roleController,
+                  Container(
+                    width: MediaQuery.of(context).size.width * .7,
+                    child: DropdownButton<Jabatan>(
+                      isExpanded: true,
+                      icon: const Icon(Icons.work),
+                      hint: Text('Jabatan'),
+                      value: jabatanController.selectedItem.value,
+                      onChanged: (Jabatan? newValue) {
+                        jabatanController.selectItem(newValue);
+                      },
+                      items: jabatanController.items.map((Jabatan item) {
+                        return DropdownMenuItem<Jabatan>(
+                          value: item,
+                          child: Text(item.name),
+                        );
+                      }).toList(),
+                    ),
                   ),
                   RoundedInputFieldAuth(
                     hintText: "Nama Lengkap",
@@ -92,7 +108,7 @@ class Register extends StatelessWidget {
                       color: _isLoading.value ? kGrey : kPrimaryColor,
                       textColor: kDark,
                       press: _isLoading.value ? (){} : () async{
-                        if(roleController.text != '' && nameController.text != '' && usernameController.text != '' && passwordController.text != '' && confirmPasswordController.text != ''){
+                        if( nameController.text != '' && usernameController.text != '' && passwordController.text != '' && confirmPasswordController.text != ''){
                           if(passwordController.text == confirmPasswordController.text){
                             if(passwordController.text.length >= 6){
                               _isLoading.value = true;

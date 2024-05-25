@@ -39,7 +39,8 @@ class OpenPermitController extends GetxController {
     }
   }
 
-  Future<int> openPermit(String role, int permitId, String value, int userId) async{
+  Future<int> openPermit(String role, int permitId, String value, int userId,
+      {bool? workDone = false, bool? needPermit = false}) async{
     int statusCode;
     try {
       var response = await dio.post(
@@ -49,6 +50,8 @@ class OpenPermitController extends GetxController {
             'permit_id': permitId,
             'user_id': userId,
             'value': value,
+            'work_done': workDone,
+            'need_permit': needPermit
           }
       );
 

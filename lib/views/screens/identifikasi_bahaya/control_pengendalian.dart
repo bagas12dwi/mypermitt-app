@@ -106,6 +106,7 @@ class ControlPengendalianScreen extends StatelessWidget {
                           title: item['pertanyaan'],
                           value: item['value'],
                           screen: 'kontrol',
+                        textController: requestPermitController.kontrolLainnyaController,
                       );
                     }).toList(),
                   ),

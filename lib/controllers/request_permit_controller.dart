@@ -78,6 +78,48 @@ class RequestPermitController extends GetxController {
       'value': false,
     },
   ]);
+  Rx<List<Map<String, dynamic>>> confinedWorking = Rx<List<Map<String, dynamic>>>([
+    {
+      'pertanyaan': 'Menyiapkan blower',
+      'value': false,
+    },
+    {
+      'pertanyaan': 'Memastikan kabel las/listrik tidak ada kerusakan',
+      'value': false,
+    },
+    {
+      'pertanyaan': 'Memastikan baricade sudah terpasang',
+      'value': false,
+    },
+    {
+      'pertanyaan': 'Menyediakan penerangan (dalam tangki)',
+      'value': false,
+    },
+    {
+      'pertanyaan': 'Memastikan kadar gas sudah dilakukan pengecekan oleh HSE',
+      'value': false,
+    },
+    {
+      'pertanyaan': 'Memeriksa kebocoran arus menggunakan tespen',
+      'value': false,
+    },
+    {
+      'pertanyaan': 'Memastikan akses naik kerja ketinggian aman',
+      'value': false,
+    },
+    {
+      'pertanyaan': 'Memastikan tagging scaffolding warna hijau',
+      'value': false,
+    },
+    {
+      'pertanyaan': 'Memastikan pekerja menggunakan Full Body Harness',
+      'value': false,
+    },
+    {
+      'pertanyaan': 'Memastikan pagar pengaman diketinggian sudah dipasang',
+      'value': false,
+    },
+  ]);
   Rx<List<Map<String, dynamic>>> working = Rx<List<Map<String, dynamic>>>([
       {
         'pertanyaan': 'Memastikan kabel las/listrik tidak ada kerusakan ',
@@ -158,6 +200,68 @@ class RequestPermitController extends GetxController {
         'value': false,
       },
     ]);
+  Rx<List<Map<String, dynamic>>> hotworkConfinedWorking = Rx<List<Map<String, dynamic>>>([
+    {
+      'pertanyaan': 'Memastikan material mudah terbakar sudah dipindahkan',
+      'value': false,
+    },
+    {
+      'pertanyaan': 'Menyiapkan blower',
+      'value': false,
+    },
+    {
+      'pertanyaan': 'Menyediakan fire blanket',
+      'value': false,
+    },
+    {
+      'pertanyaan': 'Memastikan APAR/Hydrant sudah tersedia',
+      'value': false,
+    },
+    {
+      'pertanyaan': 'Memastikan kabel las/listrik tidak ada kerusakan',
+      'value': false,
+    },
+    {
+      'pertanyaan': 'Memastikan baricade sudah terpasang',
+      'value': false,
+    },
+    {
+      'pertanyaan': 'Menyediakan penerangan (dalam tangki)',
+      'value': false,
+    },
+    {
+      'pertanyaan': 'Memastikan kadar gas sudah dilakukan pengecekan oleh HSE',
+      'value': false,
+    },
+    {
+      'pertanyaan': 'Memeriksa selang gas tidak ada kebocoran',
+      'value': false,
+    },
+    {
+      'pertanyaan': 'Memeriksa kebocoran arus menggunakan tespen ',
+      'value': false,
+    },
+    {
+      'pertanyaan': 'Standby penjaga api',
+      'value': false,
+    },
+    {
+      'pertanyaan': 'Memastikan akses naik kerja ketinggian aman',
+      'value': false,
+    },
+    {
+      'pertanyaan': 'Memastikan tagging scaffolding warna hijau',
+      'value': false,
+    },
+    {
+      'pertanyaan': 'Memastikan pekerja menggunakan Full Body Harness',
+      'value': false,
+    },
+    {
+      'pertanyaan': 'Memastikan pagar pengaman diketinggian sudah dipasang',
+      'value': false,
+    },
+  ]);
   Rx<List<Map<String, dynamic>>> hotworkWorking = Rx<List<Map<String, dynamic>>>([
         {
           'pertanyaan': 'Memastikan material mudah terbakar sudah dipindahkan',
@@ -353,6 +457,10 @@ class RequestPermitController extends GetxController {
       'pertanyaan': 'Full Body Harness',
       'value': false,
     },
+    {
+      'pertanyaan': 'Lainnya:',
+      'value': false,
+    },
   ]);
   Rx<Map<String, dynamic>> permitt = Rx<Map<String, dynamic>>({
     'user_id': null,
@@ -413,11 +521,19 @@ class RequestPermitController extends GetxController {
 
   var pageController = PageController();
 
+  var lainnyaController = TextEditingController();
+  var kontrolLainnyaController = TextEditingController();
+
+
 
   @override
   void onInit() {
     super.onInit();
     pageController = PageController();
+    lainnyaController = TextEditingController();
+    lainnyaController.addListener(_updateLainnyaText);
+    kontrolLainnyaController = TextEditingController();
+    kontrolLainnyaController.addListener(_updateKontrolLainnyaText);
   }
 
   Map<String, dynamic> get getPermitt => permitt.value;
@@ -431,6 +547,35 @@ class RequestPermitController extends GetxController {
     });
   }
 
+  void _updateLainnyaText() {
+    final List<Map<String, dynamic>> updatedList = List.from(bahaya.value);
+    final index = updatedList.indexWhere((item) => item['pertanyaan'].startsWith('Lainnya:'));
+
+    if (index != -1) {
+      updatedList[index]['pertanyaan'] = 'Lainnya: ${lainnyaController.text}';
+      bahaya.value = updatedList;
+    }
+  }
+  void _updateKontrolLainnyaText() {
+    final List<Map<String, dynamic>> updatedList = List.from(kontrol.value);
+    final index = updatedList.indexWhere((item) => item['pertanyaan'].startsWith('Lainnya:'));
+
+    if (index != -1) {
+      updatedList[index]['pertanyaan'] = 'Lainnya: ${kontrolLainnyaController.text}';
+      kontrol.value = updatedList;
+    }
+  }
+
+
+  @override
+  void dispose() {
+    lainnyaController.removeListener(_updateLainnyaText);
+    lainnyaController.dispose();
+    kontrolLainnyaController.removeListener(_updateKontrolLainnyaText);
+    kontrolLainnyaController.dispose();
+    super.dispose();
+  }
+
   void updatedCheckboxBahaya(String screen, String title, bool newValue) {
     if(screen == 'bahaya') {
       final List<Map<String, dynamic>> updatedList = List.from(bahaya.value);
@@ -438,6 +583,13 @@ class RequestPermitController extends GetxController {
 
       if (index != -1) {
         bahaya.value[index]['value'] = newValue;
+        if (title.startsWith('Lainnya:') && newValue) {
+          updatedList[index]['pertanyaan'] = 'Lainnya: ${lainnyaController.text}';
+        } else if (title.startsWith('Lainnya:') && !newValue) {
+          // Kembalikan ke default 'Lainnya:' jika checkbox di-uncheck
+          updatedList[index]['pertanyaan'] = 'Lainnya:';
+          lainnyaController.clear();
+        }
         bahaya.value = updatedList;
       }
     } else if(screen == 'kontrol') {
@@ -446,6 +598,13 @@ class RequestPermitController extends GetxController {
 
       if (index != -1) {
         kontrol.value[index]['value'] = newValue;
+        if (title.startsWith('Lainnya:') && newValue) {
+          updatedList[index]['pertanyaan'] = 'Lainnya: ${kontrolLainnyaController.text}';
+        } else if (title.startsWith('Lainnya:') && !newValue) {
+          // Kembalikan ke default 'Lainnya:' jika checkbox di-uncheck
+          updatedList[index]['pertanyaan'] = 'Lainnya:';
+          kontrolLainnyaController.clear();
+        }
         kontrol.value = updatedList;
       }
     }
@@ -464,6 +623,10 @@ class RequestPermitController extends GetxController {
       kategoriPekerjaan = hotworkConfined;
     }else if(title == 'Hotwork & Working at Height') {
       kategoriPekerjaan = hotworkWorking;
+    }else if(title == 'Hotwork & Confined Space & Working at Height'){
+      kategoriPekerjaan = hotworkConfinedWorking;
+    }else if(title == 'Confined Space & Working at Height'){
+      kategoriPekerjaan = confinedWorking;
     }else{
       is_empty.value = true;
       Get.snackbar('Gagal', 'Data yang anda pilih tidak ada!', backgroundColor: kDanger, colorText: kWhite);
