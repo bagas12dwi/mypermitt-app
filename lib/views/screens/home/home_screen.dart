@@ -83,16 +83,16 @@ class HomeScreen extends StatelessWidget {
                             ),
                           ),
                           SizedBox(height: 30.h,),
-                          user?.role == 'Supervisi' ?
+                          user!.role != 'HSE' ?
                           CardHomeScreen(
                             text: 'REQUEST PERMIT',
                             onTap: () => Get.to(() => RequestPermitScreen()),
-                          ) : SizedBox(height: 10.h,),
-                          user?.role != 'Supervisi' ?
+                          ) : Container(),
+                          SizedBox(height: 10.h,),
                           CardHomeScreen(
                             text: 'APROVE PERMIT',
                             onTap: () => Get.to(() => ApprovePermitScreen()),
-                          ) : SizedBox(height: 10.h,),
+                          ),
                           SizedBox(height: 10.h,),
                           CardHomeScreen(
                             text: 'OPEN PERMIT',

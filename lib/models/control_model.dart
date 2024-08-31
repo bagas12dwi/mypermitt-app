@@ -11,6 +11,14 @@ class ControlModel{
     required this.value,
   });
 
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'pertanyaan': pertanyaan,
+      'value': value,
+    };
+  }
+
   factory ControlModel.fromJson(Map<String, dynamic> json) {
     return ControlModel(
         id: (json['id']??"") as int,

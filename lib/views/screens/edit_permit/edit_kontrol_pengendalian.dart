@@ -1,27 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:permit_app/controllers/request_permit_controller.dart';
+import 'package:permit_app/controllers/edit_permit_controller.dart';
 import 'package:permit_app/controllers/user_controller.dart';
+import 'package:permit_app/models/control_model.dart';
+import 'package:permit_app/models/request_permit_model.dart';
 import 'package:permit_app/views/const/color.dart';
 import 'package:permit_app/views/const/components/rounded_button.dart';
 import 'package:permit_app/views/const/components/rounded_input_field.dart';
+import 'package:permit_app/views/screens/edit_permit/components/card_bahaya.dart';
 import 'package:permit_app/views/screens/home/home_screen.dart';
-import 'package:permit_app/views/screens/identifikasi_bahaya/components/card_bahaya.dart';
 
-class ControlPengendalianScreen extends StatelessWidget {
-  ControlPengendalianScreen({super.key, required this.title});
+class EditKontrolPengendalian extends StatelessWidget {
+  EditKontrolPengendalian({super.key, required this.title, required this.kontrolModel, required this.permit})
+   : pengendalianController = TextEditingController(text: permit.kontrol_pengendalian);
   final String title;
-  final RequestPermitController requestPermitController = Get.put(RequestPermitController());
+  final RequestPermit permit;
+  final EditPermitController editPermitController = Get.put(EditPermitController());
   final UserController userController = Get.put(UserController());
-  final TextEditingController pengendalianController = TextEditingController();
+  final TextEditingController pengendalianController;
+  final List<ControlModel> kontrolModel;
 
-  Future<void> _storeData() async{
-    final permittData = requestPermitController.permitt.value;
-    // print(requestPermitController.kategoriPekerjaan.value);
-    // return;
+  Future<void> _storeData() async {
+    final permittData = editPermitController.permitt.value;
     final requestData = {
-      'user_id': permittData['user_id'] as int,
+      'permitId': permit.id,
+      'user_id': permit.userId,
       'permitt_number': permittData['permitt_number'],
       'work_category': permittData['work_category'],
       'project_name': permittData['project_name'],
@@ -42,16 +46,24 @@ class ControlPengendalianScreen extends StatelessWidget {
       'lel': permittData['lel'],
       'aman_masuk': permittData['aman_masuk'],
       'aman_hotwork': permittData['aman_hotwork'],
-      'working': requestPermitController.kategoriPekerjaan.value,
-      'bahaya': requestPermitController.bahaya.value,
-      'kontrol': requestPermitController.kontrol.value,
+      'working': editPermitController.workPreparationModel.value
+          .map((item) => item.toJson())
+          .toList(),
+      'bahaya': editPermitController.hazardModel
+          .map((item) => item.toJson())
+          .toList(),
+      'kontrol': editPermitController.kontrolModel
+          .map((item) => item.toJson())
+          .toList(),
       'worker_name': permittData['worker_name']
     };
-    await requestPermitController.storePermitt(requestData);
+    await editPermitController.updatePermitDatabase(requestData);
   }
+
 
   @override
   Widget build(BuildContext context) {
+    editPermitController.initializeControlModel(kontrolModel);
     return Scaffold(
       backgroundColor: kLight,
       appBar: AppBar(
@@ -66,7 +78,6 @@ class ControlPengendalianScreen extends StatelessWidget {
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.h),
         child: Obx(() {
-          final kontrolList = requestPermitController.kontrol.value;
           RxBool isLoading = false.obs;
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,12 +115,18 @@ class ControlPengendalianScreen extends StatelessWidget {
                 child: SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
                   child: Column(
-                    children: kontrolList.map((item) {
+                    children: editPermitController.kontrolModel.map((item) {
+                      RxBool newValue = false.obs;
+                      if(item.value == 1){
+                        newValue = true.obs;
+                      } else {
+                        newValue = false.obs;
+                      }
                       return CardBahaya(
-                          title: item['pertanyaan'],
-                          value: item['value'],
-                          screen: 'kontrol',
-                        textController: requestPermitController.kontrolLainnyaController,
+                        title: item.pertanyaan,
+                        value: newValue.value,
+                        screen: 'kontrol',
+                        textController: editPermitController.kontrollainnyaController,
                       );
                     }).toList(),
                   ),
@@ -130,7 +147,7 @@ class ControlPengendalianScreen extends StatelessWidget {
                               'kontrol_pengendalian': pengendalianController.text
                             };
                             try {
-                              await requestPermitController.updatePermitt(updatedData);
+                              await editPermitController.updatePermitt(updatedData);
                               await _storeData();
                               Get.offAll(() => HomeScreen(userId: userController.user.value!.id!,));
                             } finally {

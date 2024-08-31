@@ -7,9 +7,10 @@ import 'package:permit_app/views/const/color.dart';
 import 'package:permit_app/views/const/components/rounded_button.dart';
 import 'package:permit_app/views/screens/ditolak/ditolak.dart';
 import 'package:permit_app/views/screens/open_permit/close_permit.dart';
+import 'package:permit_app/views/screens/request_permit/request_permit.dart';
 
 class CardOpenPermit extends StatelessWidget {
-  CardOpenPermit({super.key, required this.permitNumber, required this.status, required this.workCategory, required this.date, required this.time, required this.projectName, required this.location, required this.workers, required this.name, required this.role, required this.permitId, required this.userId});
+  CardOpenPermit({super.key, required this.permitNumber, required this.status, required this.workCategory, required this.date, required this.time, required this.projectName, required this.location, required this.workers, required this.name, required this.role, required this.permitId, required this.userId, required this.permitUserId});
 
   final String permitNumber;
   final String status;
@@ -23,6 +24,7 @@ class CardOpenPermit extends StatelessWidget {
   final String role;
   final int permitId;
   final int userId;
+  final int permitUserId;
   final OpenPermitController openPermitController = Get.put(OpenPermitController());
 
   Future<void> _openPermit(String value) async{
@@ -40,14 +42,14 @@ class CardOpenPermit extends StatelessWidget {
   Widget build(BuildContext context) {
     Color status_color;
 
-    if(status == 'Open') {
-      status_color = kTeal;
-    } else if(status == 'Extends') {
-      status_color = kInfo;
+    if(status == 'Aktif') {
+      status_color = kSuccess;
+    } else if(status == 'Menunggu') {
+      status_color = kWarning;
     } else if(status == 'Close') {
       status_color = kDanger;
     } else{
-      status_color = kGrey;
+      status_color = kDanger;
     }
     return Container(
       margin: EdgeInsets.only(bottom: 10.h),
@@ -102,8 +104,14 @@ class CardOpenPermit extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(workCategory),
-                    Text('${Helper.convertToDate(date)} $time')
+                    Expanded(
+                      flex: 7,
+                      child: Text(workCategory),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Text('${Helper.convertToDate(date)} $time'),
+                    ),
                   ],
                 ),
                 Text(projectName),
@@ -126,34 +134,8 @@ class CardOpenPermit extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    status == 'Close'
+                    userId == permitUserId || role == 'HSE'
                     ? RoundedButtonSmall(
-                        color: kTeal,
-                        text: 'Open',
-                        press: () {
-                          Get.defaultDialog(
-                              title: "Konfirmasi",
-                              middleText: 'Apakah anda yakin untuk Open permit ini?',
-                              actions: [
-                                RoundedButtonDialog(
-                                  onPressed: () {
-                                    Get.back();
-                                  },
-                                  title: "Tidak",
-                                ),
-                                RoundedButtonDialog(
-                                  onPressed: () async{
-                                    await _openPermit('Open');
-                                  },
-                                  title: "Ya",
-                                  backgroundColor: kLight,
-                                  textColor: kDark,
-                                )
-                              ]
-                          );
-                        }
-                      )
-                    : RoundedButtonSmall(
                         text: 'Close',
                         color: kDanger,
                         press: (){
@@ -169,7 +151,8 @@ class CardOpenPermit extends StatelessWidget {
                                 ),
                                 RoundedButtonDialog(
                                   onPressed: () async{
-                                    Get.to(() => ClosePermitScreen(role: role, permitId: permitId, userId: userId,));
+                                    await _openPermit('Close');
+                                    // Get.to(() => ClosePermitScreen(role: role, permitId: permitId, userId: userId,));
                                     // await _openPermit('Close');
                                   },
                                   title: "Ya",
@@ -179,25 +162,29 @@ class CardOpenPermit extends StatelessWidget {
                               ]
                           );
                         }
-                    ),
+                    )
+                    : Container(),
                     SizedBox(width: 5.w,),
-                    RoundedButtonSmall(
-                        text: 'Extends',
+                    userId == permitUserId
+                    ? RoundedButtonSmall(
+                        text: 'Endorse',
                         color: kInfo,
                         press: (){
                           Get.defaultDialog(
                               title: "Konfirmasi",
-                              middleText: 'Apakah anda yakin untuk Extends permit ini?',
+                              middleText: 'Apakah Lokasi Yang Dikerjakan Sesuai Dengan Kondisi Yang Disepakati Saat Pengecekan Awal?',
                               actions: [
                                 RoundedButtonDialog(
                                   onPressed: () {
-                                    Get.back();
+                                    // Get.back();
+                                    Get.off(() => RequestPermitScreen());
+                                    Get.snackbar('Informasi', 'Karena Lokasi yang dikerjakan tidak sesuai dengan kesepakatan awal maka harus membuat permit baru!');
                                   },
                                   title: "Tidak",
                                 ),
                                 RoundedButtonDialog(
                                   onPressed: () async{
-                                    await _openPermit('Extends');
+                                    await _openPermit('Endorse');
                                   },
                                   title: "Ya",
                                   backgroundColor: kLight,
@@ -206,7 +193,8 @@ class CardOpenPermit extends StatelessWidget {
                               ]
                           );
                         }
-                    ),
+                    )
+                    : Container(),
                   ],
                 )
               ],

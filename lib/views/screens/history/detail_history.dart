@@ -69,7 +69,7 @@ class DetailHistorySceen extends StatelessWidget {
             } else if(status == 'Ditolak') {
               status_color = kDanger;
             } else{
-              status_color = kGrey;
+              status_color = kDanger;
             }
 
             if(status_permit == 'Open') {
@@ -131,22 +131,6 @@ class DetailHistorySceen extends StatelessWidget {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: 5.h,),
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10.h),
-                                        color: status_permit_color
-                                    ),
-                                    child: Padding(
-                                      padding: EdgeInsets.symmetric(vertical:3.h, horizontal: 10.h),
-                                      child: Text(
-                                        status_permit,
-                                        style: const TextStyle(
-                                            color: kLight
-                                        ),
-                                      ),
-                                    ),
-                                  )
                                 ],
                               )
                             ],

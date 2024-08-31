@@ -29,7 +29,7 @@ class HistoryScreen extends StatelessWidget {
         backgroundColor: kLight,
       ),
       body: Obx(() {
-        final permitList = historyController.permitList;
+        var permitList = historyController.permitList;
         if (permitList.isEmpty) {
           return Center(
             child: Column(
@@ -57,32 +57,31 @@ class HistoryScreen extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.all(8.0),
                 child: TextFieldContainer(
-                    color: kWhite,
-                    width: 1,
-                    child: TextField(
-                      controller: searchController,
-                      decoration: InputDecoration(
-                        labelText: 'Search by Work Category',
-                        border: InputBorder.none,
-                        suffixIcon: IconButton(
-                          icon: const Icon(Icons.clear),
-                          onPressed: () {
-                            searchController.clear();
-                            FocusScope.of(context).unfocus();
-                            // Reset the search results availability status
-                            isSearchResultsAvailable.value = true;
-                          },
-                        ),
+                  color: Colors.white,
+                  width: 1,
+                  child: TextField(
+                    controller: searchController,
+                    decoration: InputDecoration(
+                      labelText: 'Search by Work Category or Project Name',
+                      border: InputBorder.none,
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          searchController.clear();
+                          FocusScope.of(context).unfocus();
+                          // Reset the search results availability status
+                          historyController.isSearchResultsAvailable.value = true;
+                          // Clear the search results
+                          historyController.searchResults.clear();
+                        },
                       ),
-                      onChanged: (value) {
-                        // Filter permits based on work category
-                        historyController.filterPermitsByWorkCategory(value);
-                        // Update the search results availability status
-                        final searchResults = historyController.searchResults;
-                        isSearchResultsAvailable.value = searchResults.isNotEmpty;
-                      },
                     ),
-                )
+                    onChanged: (value) {
+                      // Filter permits based on work category
+                      historyController.filterPermitsByWorkCategory(value);
+                    },
+                  ),
+                ),
               ),
               Expanded(
                 child: RefreshIndicator(
@@ -95,9 +94,9 @@ class HistoryScreen extends StatelessWidget {
                     padding: EdgeInsets.all(16.h),
                     child: isSearchResultsAvailable.value
                         ? ListView.builder(
-                      itemCount: permitList.length,
+                      itemCount: historyController.searchResults.length,
                       itemBuilder: (context, index) {
-                        final permit = permitList[index];
+                        final permit = historyController.searchResults[index];
                         return GestureDetector(
                           onTap: () => Get.to(() => DetailHistorySceen(
                             permitId: permit.id,
@@ -125,6 +124,8 @@ class HistoryScreen extends StatelessWidget {
                             document_path: permit.document.documentPath,
                             permitid: permit.id,
                             docDay: permit.document.day,
+                            workPreparationModel: permit.workPreparation,
+                            permit: permit,
                           ),
                         );
                       },

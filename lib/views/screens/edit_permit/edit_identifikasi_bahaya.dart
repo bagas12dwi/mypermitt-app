@@ -1,21 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:permit_app/controllers/request_permit_controller.dart';
+import 'package:permit_app/controllers/edit_permit_controller.dart';
+import 'package:permit_app/models/hazard_model.dart';
+import 'package:permit_app/models/request_permit_model.dart';
 import 'package:permit_app/views/const/color.dart';
 import 'package:permit_app/views/const/components/rounded_button.dart';
 import 'package:permit_app/views/const/components/rounded_input_field.dart';
-import 'package:permit_app/views/screens/identifikasi_bahaya/components/card_bahaya.dart';
+import 'package:permit_app/views/screens/edit_permit/components/card_bahaya.dart';
+import 'package:permit_app/views/screens/edit_permit/edit_kontrol_pengendalian.dart';
 import 'package:permit_app/views/screens/identifikasi_bahaya/control_pengendalian.dart';
 
-class IdentifikasiBahayaScreen extends StatelessWidget {
-  IdentifikasiBahayaScreen({super.key, required this.title});
+class EditIdentifikasiBahayaScreen extends StatelessWidget {
+  EditIdentifikasiBahayaScreen({super.key, required this.title, required this.hazardModel, required this.permit})
+  : jenisPekerjaanController = TextEditingController(text: permit.typeOfWork);
   final String title;
-  final RequestPermitController requestPermitController = Get.put(RequestPermitController());
-  final TextEditingController jenisPekerjaanController = TextEditingController();
+  final RequestPermit permit;
+  final EditPermitController editPermitController = Get.put(EditPermitController());
+  final TextEditingController jenisPekerjaanController;
+  final List<HazardModel> hazardModel;
 
   @override
   Widget build(BuildContext context) {
+    editPermitController.initializeBahayaModel(hazardModel);
     return Scaffold(
       backgroundColor: kLight,
       appBar: AppBar(
@@ -30,7 +37,6 @@ class IdentifikasiBahayaScreen extends StatelessWidget {
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.h),
         child: Obx(() {
-          final bahayaList = requestPermitController.bahaya.value;
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -50,8 +56,8 @@ class IdentifikasiBahayaScreen extends StatelessWidget {
               Text(
                 'Detail Proses Pekerjaan',
                 style: TextStyle(
-                  fontSize: 14.h,
-                  fontWeight: FontWeight.bold
+                    fontSize: 14.h,
+                    fontWeight: FontWeight.bold
                 ),
               ),
               RoundedInputTextArea(hintText: 'Enter your text here ...', maxLines: 3, controller:  jenisPekerjaanController,),
@@ -59,20 +65,26 @@ class IdentifikasiBahayaScreen extends StatelessWidget {
               Text(
                 'Bahaya ',
                 style: TextStyle(
-                  fontSize: 14.h,
-                  fontWeight: FontWeight.bold
+                    fontSize: 14.h,
+                    fontWeight: FontWeight.bold
                 ),
               ),
               Expanded(
                 child: SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
                   child: Column(
-                    children: bahayaList.map((item) {
+                    children: editPermitController.hazardModel.map((item) {
+                      RxBool newValue = false.obs;
+                      if(item.value == 1){
+                        newValue = true.obs;
+                      } else {
+                        newValue = false.obs;
+                      }
                       return CardBahaya(
-                          title: item['pertanyaan'],
-                          value: item['value'],
-                          screen: 'bahaya',
-                          textController: requestPermitController.lainnyaController,
+                        title: item.pertanyaan,
+                        value: newValue.value,
+                        screen: 'bahaya',
+                        textController: editPermitController.lainnyaController,
                       );
                     }).toList(),
                   ),
@@ -89,8 +101,8 @@ class IdentifikasiBahayaScreen extends StatelessWidget {
                           final Map<String, dynamic> updatedData = {
                             'type_of_work': jenisPekerjaanController.text,
                           };
-                          requestPermitController.updatePermitt(updatedData);
-                          Get.to(() => ControlPengendalianScreen(title: title));
+                          editPermitController.updatePermitt(updatedData);
+                          Get.to(() => EditKontrolPengendalian(title: title, kontrolModel: permit.control, permit: permit,));
                         }
                       }
                   )

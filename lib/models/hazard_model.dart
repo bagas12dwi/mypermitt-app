@@ -11,6 +11,15 @@ class HazardModel {
     required this.value,
   });
 
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'pertanyaan': pertanyaan,
+      'value': value,
+    };
+  }
+
+
   factory HazardModel.fromJson(Map<String, dynamic> json) {
     return HazardModel(
         id: (json['id']??"") as int,

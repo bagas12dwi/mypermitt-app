@@ -11,6 +11,13 @@ class WorkPreparationModel {
     required this.value,
   });
 
+  Map<String, dynamic> toJson() {
+    return {
+      'pertanyaan': pertanyaan,
+      'value': value,
+    };
+  }
+
   factory WorkPreparationModel.fromJson(Map<String, dynamic> json) {
     return WorkPreparationModel(
         id: (json['id']??"") as int,

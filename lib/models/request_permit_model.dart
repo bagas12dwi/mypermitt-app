@@ -22,10 +22,10 @@ class RequestPermit {
   String toolsUsed;
   String liftingDistance;
   int gasMeasurements;
-  int oksigen;
-  int karbonDioksida;
-  int hidrogenSulfida;
-  int lel;
+  double oksigen;
+  double karbonDioksida;
+  double hidrogenSulfida;
+  double lel;
   int amanMasuk;
   int amanHotwork;
   int isApproveHse;
@@ -37,6 +37,7 @@ class RequestPermit {
   List<HazardModel> hazard;
   UserPermit user;
   DocumentModel document;
+  String workerName;
 
   RequestPermit({
     required this.id,
@@ -70,7 +71,8 @@ class RequestPermit {
     required this.kontrol_pengendalian,
     required this.statusPermit,
     required this.message,
-    required this.document
+    required this.document,
+    required this.workerName
   });
 
   factory RequestPermit.fromJson(Map<String, dynamic> json) {
@@ -103,10 +105,10 @@ class RequestPermit {
         toolsUsed: (json['tools_used']??"") as String,
         liftingDistance: (json['lifting_distance']??"") as String,
         gasMeasurements: (json['gas_measurements']??0) as int,
-        oksigen: (json['oksigen']??0) as int,
-        karbonDioksida: (json['karbon_dioksida']??0) as int,
-        hidrogenSulfida: (json['hidrogen_sulfida']??0) as int,
-        lel: (json['lel']??0) as int,
+        oksigen: (json['oksigen'].toDouble() ??0.0) as double,
+        karbonDioksida: (json['karbon_dioksida'].toDouble() ??0.0) as double,
+        hidrogenSulfida: (json['hidrogen_sulfida'].toDouble() ??0.0) as double,
+        lel: (json['lel'].toDouble() ??0.0) as double,
         amanMasuk: (json['aman_masuk']??0) as int,
         amanHotwork: (json['aman_hotwork']??0) as int,
         isApproveHse: (json['is_approve_hse']??0) as int,
@@ -118,7 +120,8 @@ class RequestPermit {
         kontrol_pengendalian: (json['kontrol_pengendalian']??"") as String,
         statusPermit: (json['status_permit']??"") as String,
         message: (json['message']??"") as String,
-        document: document
+        document: document,
+        workerName: (json['worker_name']??"") as String
     );
   }
 }

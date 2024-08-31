@@ -23,6 +23,7 @@ class DataInformasi extends StatelessWidget {
   final TextEditingController locationController = TextEditingController();
   final TextEditingController alatController = TextEditingController();
   final TextEditingController jarakController = TextEditingController();
+  final TextEditingController namaPekerjaController = TextEditingController();
 
   void _updateData() {
     final Map<String, dynamic> updatedData = {
@@ -37,7 +38,8 @@ class DataInformasi extends StatelessWidget {
       'description': descriptionController.text,
       'location': locationController.text,
       'tools_used': alatController.text,
-      'lifting_distance': jarakController.text
+      'lifting_distance': jarakController.text,
+      'worker_name': namaPekerjaController.text
     };
     requestPermitController.updatePermitt(updatedData);
   }
@@ -158,6 +160,16 @@ class DataInformasi extends StatelessWidget {
                           ),
                           SizedBox(height: 5.h,),
                           RoundedInputField(hintText: 'Jumlah Pekerja', keyboardType: TextInputType.number, controller: workersController,),
+                          SizedBox(height: 10.h,),
+                          Text(
+                            'Nama Pekerja : ',
+                            style: TextStyle(
+                                fontSize: 16.h,
+                                fontWeight: FontWeight.bold
+                            ),
+                          ),
+                          SizedBox(height: 5.h,),
+                          RoundedInputTextArea(hintText: 'Nama Pekerja', maxLines: 3, controller: namaPekerjaController,),
                           SizedBox(height: 10.h,),
                           Text(
                             'Deskripsi Pekerjaan : ',

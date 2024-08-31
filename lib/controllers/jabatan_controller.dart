@@ -14,6 +14,7 @@ class JabatanController extends GetxController {
       Jabatan(id: 1, name: 'Supervisi'),
       Jabatan(id: 2, name: 'Manager'),
       Jabatan(id: 3, name: 'HSE'),
+      Jabatan(id: 3, name: 'Pelaksana Kerja'),
     ]);
   }
 

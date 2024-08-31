@@ -7,13 +7,14 @@ import 'package:permit_app/views/const/components/rounded_button.dart';
 import 'package:permit_app/views/screens/detail_permit/components/card_data_informasi.dart';
 
 class DataInformasiView extends StatelessWidget {
-  const DataInformasiView({super.key, required this.projectName, required this.tanggal, required this.time, required this.organik, required this.jumlahPekerja, required this.deskripsi, required this.lokasi, required this.onNextPressed, required this.onBackPressed, required this.workCategory, required this.toolsUsed, required this.liftingDistance});
+  const DataInformasiView({super.key, required this.projectName, required this.tanggal, required this.time, required this.organik, required this.jumlahPekerja, required this.deskripsi, required this.lokasi, required this.onNextPressed, required this.onBackPressed, required this.workCategory, required this.toolsUsed, required this.liftingDistance, required this.namaPekerja});
   final String projectName;
   final String tanggal;
   final String time;
   final String organik;
   final String jumlahPekerja;
   final String deskripsi;
+  final String namaPekerja;
   final String lokasi;
   final String workCategory;
   final String toolsUsed;
@@ -77,6 +78,11 @@ class DataInformasiView extends StatelessWidget {
                       CardDataInformasi(
                           title: 'Jumlah Pekerja :',
                           value: jumlahPekerja
+                      ),
+                      SizedBox(height: 10.h,),
+                      CardDataInformasi(
+                          title: 'Nama Pekerja :',
+                          value: namaPekerja
                       ),
                       SizedBox(height: 10.h,),
                       CardDataInformasi(

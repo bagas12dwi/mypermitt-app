@@ -68,7 +68,7 @@ class OpenPermitScreen extends StatelessWidget {
                       onTap: () => Get.to(() => DetailPermitScreen(permit_id: permit.id, fromScreen: 'Open',)),
                       child: CardOpenPermit(
                         permitNumber: permit.permittNumber,
-                        status: permit.statusPermit,
+                        status: permit.status,
                         workCategory: permit.workCategory,
                         date: permit.date,
                         time: permit.time,
@@ -79,6 +79,7 @@ class OpenPermitScreen extends StatelessWidget {
                         role: userController.user.value!.role!,
                         permitId: permit.id,
                         userId: userController.user.value!.id!,
+                        permitUserId: permit.userId,
                       ),
                     );
                   }

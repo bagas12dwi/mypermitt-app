@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -11,13 +12,17 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:permit_app/controllers/user_controller.dart';
 import 'package:permit_app/helpers/api.dart';
 import 'package:permit_app/helpers/helper.dart';
+import 'package:permit_app/models/request_permit_model.dart';
+import 'package:permit_app/models/work_preparation_model.dart';
 import 'package:permit_app/views/const/color.dart';
 import 'package:permit_app/views/const/components/rounded_button.dart';
+import 'package:permit_app/views/screens/edit_permit/edit_permit.dart';
+import 'package:permit_app/views/screens/edit_permit/edit_work_preparation.dart';
 import 'package:permit_app/views/screens/housekeeping/housekeeping.dart';
 import 'package:path/path.dart' as path;
 
 class CardHistory extends StatelessWidget {
-  CardHistory({super.key, required this.permitNumber, required this.status, required this.workCategory, required this.date, required this.time, required this.projectName, required this.location, required this.workers, required this.message, required this.user_name, required this.status_permit, required this.document_path, required this.permitid, required this.docDay});
+  CardHistory({super.key, required this.permitNumber, required this.status, required this.workCategory, required this.date, required this.time, required this.projectName, required this.location, required this.workers, required this.message, required this.user_name, required this.status_permit, required this.document_path, required this.permitid, required this.docDay, required this.workPreparationModel, required this.permit});
   final String permitNumber;
   final String status;
   final String status_permit;
@@ -33,6 +38,8 @@ class CardHistory extends StatelessWidget {
   final int workers;
   final int docDay;
   final UserController userController = Get.put(UserController());
+  final List<WorkPreparationModel> workPreparationModel;
+  final RequestPermit permit;
 
   Future<bool> _requestPermission(Permission permission) async {
     // await Permission.manageExternalStorage.request();
@@ -100,7 +107,7 @@ class CardHistory extends StatelessWidget {
     } else if(status == 'Ditolak') {
       status_color = kDanger;
     } else{
-      status_color = kGrey;
+      status_color = kDanger;
     }
 
     if(status_permit == 'Open') {
@@ -110,7 +117,7 @@ class CardHistory extends StatelessWidget {
     } else if(status_permit == 'Close') {
       status_permit_color = kDanger;
     } else{
-      status_permit_color = kGrey;
+      status_permit_color = kDanger;
     }
     return Container(
       margin: EdgeInsets.only(bottom: 10.h),
@@ -135,7 +142,7 @@ class CardHistory extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  permitNumber,
+                  permit.permittNumber,
                   style: TextStyle(
                       fontSize: 16.h,
                       fontWeight: FontWeight.bold
@@ -144,6 +151,28 @@ class CardHistory extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
+                     status == 'Ditolak'
+                    ? Column(
+                      children: [
+                        GestureDetector(
+                          onTap: () => Get.to(() => EditWorkPreparationScreen(title: workCategory, workPreparationModel: workPreparationModel, permit: permit,)),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.h),
+                                color: kDark
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical:3.h, horizontal: 3.h),
+                              child: const Icon(
+                                Icons.edit,
+                                color: kLight,
+                              )
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 5.h,),
+                      ],
+                    ) : Container(),
                     Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10.h),
@@ -159,22 +188,6 @@ class CardHistory extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(height: 5.h,),
-                    Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.h),
-                          color: status_permit_color
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(vertical:3.h, horizontal: 10.h),
-                        child: Text(
-                          status_permit,
-                          style: const TextStyle(
-                              color: kLight
-                          ),
-                        ),
-                      ),
-                    )
                   ],
                 )
               ],
@@ -186,8 +199,14 @@ class CardHistory extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(workCategory),
-                    Text('${Helper.convertToDate(date)} ${time}')
+                    Expanded(
+                        flex: 7,
+                        child: Text(workCategory)
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Text('${Helper.convertToDate(date)} $time')
+                    )
                   ],
                 ),
                 Text(projectName),
@@ -206,7 +225,7 @@ class CardHistory extends StatelessWidget {
                     Text('Jumlah Pekerja : $workers'),
                     status == 'Aktif' && dayDiff <= 7 ? RoundedButtonSmall(
                         text: docDay != dayDiff ? "Isi Housekeeping" : "Download Dokumen",
-                        color: docDay != dayDiff ? kWarning : kDark,
+                        color: docDay != dayDiff ? kInfo : kDark,
                         press: () async {
                           // Request storage permissions
                           if(docDay != dayDiff) {
@@ -236,9 +255,7 @@ class CardHistory extends StatelessWidget {
                 status == 'Aktif' && dayDiff <= 7
                     ? Text('Sisa Hari Permit $dayDiff dari 7 hari', style: const TextStyle(fontStyle: FontStyle.italic,))
                     : Container(),
-                userController.user.value!.role! != 'Supervisi'
-                    ?  Text('Oleh : $user_name', style: TextStyle(fontWeight: FontWeight.bold),)
-                    : Container(),
+                Text('Oleh : $user_name', style: TextStyle(fontWeight: FontWeight.bold),),
                 SizedBox(height: 5.h,),
                 status != 'Ditolak' ? Container()
                     : Text(

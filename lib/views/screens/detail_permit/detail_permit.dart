@@ -116,6 +116,7 @@ class DetailPermitScreen extends StatelessWidget {
                         workCategory: permitDetail.workCategory,
                         toolsUsed: permitDetail.toolsUsed,
                         liftingDistance: permitDetail.liftingDistance,
+                        namaPekerja: permitDetail.workerName,
                     );
                   case 2 :
                     if(permitDetail.gasMeasurements == 1) {

@@ -483,7 +483,8 @@ class RequestPermitController extends GetxController {
     'hidrogen_sulfida': 0,
     'lel': 0,
     'aman_masuk': false,
-    'aman_hotwork': false
+    'aman_hotwork': false,
+    'worker_name': ''
   });
 
   RxBool is_empty = false.obs;
@@ -516,7 +517,8 @@ class RequestPermitController extends GetxController {
       kontrol_pengendalian: '',
       statusPermit: '',
       message: '',
-      document: DocumentModel(userId: 0, permitId: 0, documentPath: '', day: 0)
+      document: DocumentModel(userId: 0, permitId: 0, documentPath: '', day: 0),
+      workerName: ''
   ).obs;
 
   var pageController = PageController();

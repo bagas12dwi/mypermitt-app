@@ -6,10 +6,10 @@ import 'package:permit_app/views/screens/detail_permit/components/card_data_info
 
 class GasMeasurementView extends StatelessWidget {
   const GasMeasurementView({super.key, required this.oksigen, required this.karbonDioksida, required this.hidrogen, required this.lel, required this.masuk, required this.hotwork, required this.onBackPressed, required this.onNextPressed});
-  final int oksigen;
-  final int karbonDioksida;
-  final int hidrogen;
-  final int lel;
+  final double oksigen;
+  final double karbonDioksida;
+  final double hidrogen;
+  final double lel;
   final int masuk;
   final int hotwork;
   final VoidCallback onBackPressed;
@@ -34,22 +34,22 @@ class GasMeasurementView extends StatelessWidget {
             SizedBox(height: 10.h,),
             CardDataInformasi(
                 title: 'O2 :',
-                value: '${oksigen}'
+                value: '${oksigen} %'
             ),
             SizedBox(height: 10.h,),
             CardDataInformasi(
                 title: 'CO2 :',
-                value: '${karbonDioksida}'
+                value: '${karbonDioksida} ppm'
             ),
             SizedBox(height: 10.h,),
             CardDataInformasi(
                 title: 'H2S :',
-                value: '${hidrogen}'
+                value: '${hidrogen} ppm'
             ),
             SizedBox(height: 10.h,),
             CardDataInformasi(
                 title: 'LEL :',
-                value: '${lel}'
+                value: '${lel} %'
             ),
             SizedBox(height: 10.h,),
             Container(
